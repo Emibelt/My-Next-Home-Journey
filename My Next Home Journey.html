@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Next Home Journey | with Emiliano</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F8FAFC;
+            color: #0F172A;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .step-panel {
+            display: none;
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        .step-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Interactive Pill Checkbox Styling */
+        .pill-checkbox:checked + .pill-label {
+            background-color: #0F172A;
+            color: #FFFFFF;
+            border-color: #0F172A;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
+        }
+
+        .pill-checkbox:checked + .pill-label .pill-icon {
+            display: inline-block;
+        }
+
+        /* Custom Select Arrow */
+        select.custom-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748B'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.15rem;
+            padding-right: 2.75rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+
+    <!-- Toast Notification Banner (Replaces native alert) -->
+    <div id="toast-banner" class="fixed top-20 left-1/2 -translate-x-1/2 z-[100] hidden max-w-sm w-[92%] transition-all duration-300">
+        <div id="toast-content" class="bg-[#0F172A] text-white px-4 py-3.5 rounded-2xl shadow-xl border border-slate-700/80 flex items-center space-x-3 text-sm font-medium">
+            <i id="toast-icon" class="fa-solid fa-circle-info text-blue-400 text-base"></i>
+            <span id="toast-message" class="flex-1 leading-snug">Notification message</span>
+        </div>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="bg-white border-b border-slate-200/80 sticky top-0 z-50 shadow-[0_1px_3px_rgba(15,23,42,0.03)]">
+        <div class="max-w-lg mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center gap-3">
+            <div class="flex items-center space-x-3 min-w-0">
+                <div class="bg-[#0F172A] w-11 h-11 rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm">
+                    <i class="fa-solid fa-house-chimney text-sky-400 text-lg"></i>
+                </div>
+                <div class="truncate">
+                    <h1 class="font-extrabold text-[#0F172A] text-base sm:text-lg leading-tight tracking-tight truncate">My Next Home Journey</h1>
+                    <p class="text-xs text-slate-500 font-medium">with Emiliano</p>
+                </div>
+            </div>
+
+            <!-- Step Indicator Pill -->
+            <div class="bg-slate-100 border border-slate-200/90 text-slate-500 text-[11px] font-bold px-3.5 py-1.5 rounded-full uppercase tracking-wider shrink-0">
+                STEP <span id="current-step-num" class="text-[#0F172A] font-extrabold">1</span> OF 8
+            </div>
+        </div>
+
+        <!-- Progress Bar Across Bottom of Header -->
+        <div class="w-full bg-slate-100 h-1 overflow-hidden">
+            <div id="progress-bar" class="bg-[#0F172A] h-full w-[12.5%] transition-all duration-300 ease-out"></div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-lg w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 my-auto">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] border border-slate-200/80">
+            <form id="wishlist-form" onsubmit="return false;">
+
+                <!-- STEP 1: Basic Details -->
+                <div class="step-panel active" data-step="1">
+                    <h2 class="text-2xl font-extrabold text-[#0F172A] tracking-tight mb-1">Basic Details</h2>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-5 pb-4 border-b border-slate-100">Take your time—tell me a little about you and your property so I can prepare a custom plan.</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label for="full_name" class="block text-sm font-bold text-[#0F172A] mb-1.5">Full Name <span class="text-rose-500">*</span></label>
+                            <input type="text" id="full_name" placeholder="e.g., Alex & Jordan Smith" class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition">
+                        </div>
+
+                        <div>
+                            <label for="phone_number" class="block text-sm font-bold text-[#0F172A] mb-1.5">Best Phone Number <span class="text-rose-500">*</span></label>
+                            <input type="tel" id="phone_number" placeholder="(555) 000-0000" class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition">
+                        </div>
+
+                        <div>
+                            <label for="email_address" class="block text-sm font-bold text-[#0F172A] mb-1.5">Best Email Address <span class="text-rose-500">*</span></label>
+                            <input type="email" id="email_address" placeholder="alex@example.com" class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition">
+                        </div>
+
+                        <div>
+                            <label for="property_address" class="block text-sm font-bold text-[#0F172A] mb-1.5">Property Address</label>
+                            <input type="text" id="property_address" placeholder="123 Main St, San Diego, CA 92101" class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition">
+                        </div>
+
+                        <div>
+                            <label for="about_seller" class="block text-sm font-bold text-[#0F172A] mb-1">Tell Me A Bit About Your Household...</label>
+                            <p class="text-xs text-slate-400 mb-2 leading-relaxed">(No rush at all—share whatever feels helpful about your family, pets, or what prompted you to explore a move.)</p>
+                            <textarea id="about_seller" rows="3" placeholder="e.g., We've lived here 7 years, have two dogs, and are exploring our next chapter..." class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: The Journey Ahead -->
+                <div class="step-panel" data-step="2">
+                    <h2 class="text-2xl font-extrabold text-[#0F172A] tracking-tight mb-1">The Journey Ahead</h2>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-5 pb-4 border-b border-slate-100">Help me understand where life is taking you next and at what pace.</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label for="moving_destination" class="block text-sm font-bold text-[#0F172A] mb-1.5">Where are you moving to?</label>
+                            <input type="text" id="moving_destination" placeholder="e.g., Moving across town, out of state, or exploring" class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition">
+                        </div>
+
+                        <div>
+                            <label for="moving_timeline" class="block text-sm font-bold text-[#0F172A] mb-1.5">How soon would you ideally like to be there?</label>
+                            <select id="moving_timeline" class="custom-select w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition cursor-pointer">
+                                <option value="Within 1 month">Within 1 month</option>
+                                <option value="1 - 2 months" selected>1 - 2 months</option>
+                                <option value="3+ months">3+ months</option>
+                                <option value="No rush / Just exploring options">No rush / Just exploring options</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="milestone_event" class="block text-sm font-bold text-[#0F172A] mb-1">Is there a specific event or milestone you're working around?</label>
+                            <p class="text-xs text-slate-400 mb-2 leading-relaxed">(e.g., A job start date, school calendar, wedding, retirement, or waiting for a specific date)</p>
+                            <textarea id="milestone_event" rows="3" placeholder="e.g., Hoping to be settled before the new school semester starts..." class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Pricing & Equity Comfort Zone -->
+                <div class="step-panel" data-step="3">
+                    <h2 class="text-2xl font-extrabold text-[#0F172A] tracking-tight mb-1">Pricing & Equity Comfort Zone</h2>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-5 pb-4 border-b border-slate-100">Ballpark numbers are totally fine—this helps me map out your estimated net proceeds.</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label for="ideal_list_price" class="block text-sm font-bold text-[#0F172A] mb-1.5">If you had a magic wand, what price would you love to list for? ($)</label>
+                            <input type="text" id="ideal_list_price" placeholder="e.g., $950,000" class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition">
+                        </div>
+
+                        <div>
+                            <label for="bottom_line_price" class="block text-sm font-bold text-[#0F172A] mb-1">What price won't you go below? (Your Comfort Floor) ($)</label>
+                            <p class="text-xs text-slate-400 mb-2 leading-relaxed">(The baseline number you'd need to feel great about making your next move happen.)</p>
+                            <input type="text" id="bottom_line_price" placeholder="e.g., $900,000" class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition">
+                        </div>
+
+                        <div>
+                            <label for="mortgage_balance" class="block text-sm font-bold text-[#0F172A] mb-1">Roughly how much do you currently owe on the property? ($)</label>
+                            <p class="text-xs text-slate-400 mb-2 leading-relaxed">(A rough estimate or "Free & Clear" helps calculate net proceeds.)</p>
+                            <input type="text" id="mortgage_balance" placeholder="e.g., $100,000 or Free & Clear" class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 4: Creative Financing Options -->
+                <div class="step-panel" data-step="4">
+                    <h2 class="text-2xl font-extrabold text-[#0F172A] tracking-tight mb-1">Creative Financing Options</h2>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-5 pb-4 border-b border-slate-100">Optional ways to make your home stand out and attract strong offers.</p>
+
+                    <div class="space-y-5">
+                        <div>
+                            <label for="open_to_incentives" class="block text-sm font-bold text-[#0F172A] mb-1.5">Would you be open to helping finance the home or offering incentives for a buyer?</label>
+                            <select id="open_to_incentives" class="custom-select w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition cursor-pointer">
+                                <option value="Yes, open to exploring creative options" selected>Yes, open to exploring creative options</option>
+                                <option value="Maybe, depending on the offer price">Maybe, depending on the offer price</option>
+                                <option value="No, prefer a traditional sale">No, prefer a traditional sale</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-[#0F172A] mb-2">If yes, which options would you consider? <span class="text-xs font-normal text-slate-400">(Tap to toggle)</span></label>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="cursor-pointer select-none">
+                                    <input type="checkbox" name="finance_options" value="2-1 Rate Buydown" checked class="pill-checkbox hidden">
+                                    <span class="pill-label inline-flex items-center px-3.5 py-2.5 rounded-xl border border-slate-200 bg-[#F1F5F9] text-slate-700 text-xs sm:text-sm font-semibold transition hover:border-slate-300">
+                                        <i class="fa-solid fa-check pill-icon hidden mr-1.5 text-sky-400 text-xs"></i>2-1 Rate Buydown
+                                    </span>
+                                </label>
+
+                                <label class="cursor-pointer select-none">
+                                    <input type="checkbox" name="finance_options" value="3-2-1 Rate Buydown" class="pill-checkbox hidden">
+                                    <span class="pill-label inline-flex items-center px-3.5 py-2.5 rounded-xl border border-slate-200 bg-[#F1F5F9] text-slate-700 text-xs sm:text-sm font-semibold transition hover:border-slate-300">
+                                        <i class="fa-solid fa-check pill-icon hidden mr-1.5 text-sky-400 text-xs"></i>3-2-1 Rate Buydown
+                                    </span>
+                                </label>
+
+                                <label class="cursor-pointer select-none">
+                                    <input type="checkbox" name="finance_options" value="Buyer Closing Cost Credit" checked class="pill-checkbox hidden">
+                                    <span class="pill-label inline-flex items-center px-3.5 py-2.5 rounded-xl border border-slate-200 bg-[#F1F5F9] text-slate-700 text-xs sm:text-sm font-semibold transition hover:border-slate-300">
+                                        <i class="fa-solid fa-check pill-icon hidden mr-1.5 text-sky-400 text-xs"></i>Buyer Closing Cost Credit
+                                    </span>
+                                </label>
+
+                                <label class="cursor-pointer select-none">
+                                    <input type="checkbox" name="finance_options" value="Seller Carryback / Financing" class="pill-checkbox hidden">
+                                    <span class="pill-label inline-flex items-center px-3.5 py-2.5 rounded-xl border border-slate-200 bg-[#F1F5F9] text-slate-700 text-xs sm:text-sm font-semibold transition hover:border-slate-300">
+                                        <i class="fa-solid fa-check pill-icon hidden mr-1.5 text-sky-400 text-xs"></i>Seller Carryback / Financing
+                                    </span>
+                                </label>
+
+                                <label class="cursor-pointer select-none">
+                                    <input type="checkbox" name="finance_options" value="Assumable Loan (FHA/VA)" class="pill-checkbox hidden">
+                                    <span class="pill-label inline-flex items-center px-3.5 py-2.5 rounded-xl border border-slate-200 bg-[#F1F5F9] text-slate-700 text-xs sm:text-sm font-semibold transition hover:border-slate-300">
+                                        <i class="fa-solid fa-check pill-icon hidden mr-1.5 text-sky-400 text-xs"></i>Assumable Loan (FHA/VA)
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="finance_notes" class="block text-sm font-bold text-[#0F172A] mb-1.5">Any thoughts or questions on creative financing?</label>
+                            <textarea id="finance_notes" rows="2" placeholder="e.g., Happy to look at numbers side-by-side..." class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 5: Your Home & Story -->
+                <div class="step-panel" data-step="5">
+                    <h2 class="text-2xl font-extrabold text-[#0F172A] tracking-tight mb-1">Your Home & Story</h2>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-5 pb-4 border-b border-slate-100">Help me see your home through your eyes—what makes it special?</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label for="home_description" class="block text-sm font-bold text-[#0F172A] mb-1">Would you please describe your home for me?</label>
+                            <p class="text-xs text-slate-400 mb-2 leading-relaxed">(Share the layout, favorite rooms, backyard vibe, or what you've loved most about living there.)</p>
+                            <textarea id="home_description" rows="3" placeholder="e.g., Bright 3-bed, 2-bath single-story with open kitchen and quiet cul-de-sac street..." class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition"></textarea>
+                        </div>
+
+                        <div>
+                            <label for="home_upgrades" class="block text-sm font-bold text-[#0F172A] mb-1">Recent Upgrades or Special Features</label>
+                            <p class="text-xs text-slate-400 mb-2 leading-relaxed">(e.g., Remodeled kitchen, paid-off solar, new roof/HVAC, EV charger)</p>
+                            <textarea id="home_upgrades" rows="2" placeholder="e.g., New quartz countertops in 2024, owned solar panels..." class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition"></textarea>
+                        </div>
+
+                        <div>
+                            <label for="home_condition" class="block text-sm font-bold text-[#0F172A] mb-1.5">How would you describe the overall condition right now?</label>
+                            <select id="home_condition" class="custom-select w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition cursor-pointer">
+                                <option value="Turnkey & Move-In Ready" selected>Turnkey & Move-In Ready</option>
+                                <option value="Great shape, just needs minor touch-ups">Great shape, just needs minor touch-ups</option>
+                                <option value="Could use some updating / TLC">Could use some updating / TLC</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="solar_status" class="block text-sm font-bold text-[#0F172A] mb-1.5">Do you have solar panels on the home?</label>
+                            <select id="solar_status" class="custom-select w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition cursor-pointer">
+                                <option value="No solar" selected>No solar</option>
+                                <option value="Owned outright (paid off)">Owned outright (paid off)</option>
+                                <option value="Leased / PPA">Leased / PPA</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="occupancy_status" class="block text-sm font-bold text-[#0F172A] mb-1.5">Is the property currently owner-occupied, tenant-occupied, or vacant?</label>
+                            <select id="occupancy_status" class="custom-select w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition cursor-pointer">
+                                <option value="Owner-occupied" selected>Owner-occupied</option>
+                                <option value="Tenant-occupied">Tenant-occupied</option>
+                                <option value="Vacant / Ready to show">Vacant / Ready to show</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 6: Your Next Home Search -->
+                <div class="step-panel" data-step="6">
+                    <h2 class="text-2xl font-extrabold text-[#0F172A] tracking-tight mb-1">Your Next Home Search</h2>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-5 pb-4 border-b border-slate-100">If you're buying another home, let's connect the dots so both moves flow smoothly.</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label for="buying_next" class="block text-sm font-bold text-[#0F172A] mb-1.5">Are you planning to buy your next home around the same time?</label>
+                            <select id="buying_next" class="custom-select w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition cursor-pointer">
+                                <option value="Yes, buying locally in San Diego" selected>Yes, buying locally in San Diego</option>
+                                <option value="Yes, buying out of the area / relocating">Yes, buying out of the area / relocating</option>
+                                <option value="No, renting or staying with family for now">No, renting or staying with family for now</option>
+                                <option value="Not sure yet">Not sure yet</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="next_home_areas" class="block text-sm font-bold text-[#0F172A] mb-1.5">What areas are you looking at for your next home?</label>
+                            <input type="text" id="next_home_areas" placeholder="e.g., Clairemont, University City, Carlsbad" class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition">
+                        </div>
+
+                        <div>
+                            <label for="next_home_price" class="block text-sm font-bold text-[#0F172A] mb-1.5">What price range are you targeting for the next home? ($)</label>
+                            <input type="text" id="next_home_price" placeholder="e.g., $850k - $1.1M (or N/A)" class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition">
+                        </div>
+
+                        <div>
+                            <label for="next_home_musthaves" class="block text-sm font-bold text-[#0F172A] mb-1.5">Must-haves for your next place?</label>
+                            <textarea id="next_home_musthaves" rows="2" placeholder="e.g., Single-level, bigger backyard, closer to work..." class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 7: Stress-Free Strategy & Media -->
+                <div class="step-panel" data-step="7">
+                    <h2 class="text-2xl font-extrabold text-[#0F172A] tracking-tight mb-1">Stress-Free Strategy & Media</h2>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-5 pb-4 border-b border-slate-100">Tailoring your marketing presentation, Zillow Showcase media, and showing schedule.</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label for="showing_pref" class="block text-sm font-bold text-[#0F172A] mb-1.5">How can we make showings smooth for your household?</label>
+                            <select id="showing_pref" class="custom-select w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition cursor-pointer">
+                                <option value="24-hour notice works best" selected>24-hour notice works best</option>
+                                <option value="Flexible with a couple hours notice">Flexible with a couple hours notice</option>
+                                <option value="Specific days/hours only (we have pets/kids/WFH)">Specific days/hours only (we have pets/kids/WFH)</option>
+                                <option value="Home will be vacant / easy access">Home will be vacant / easy access</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="media_pref" class="block text-sm font-bold text-[#0F172A] mb-1.5">Are you open to media (Zillow Showcase includes home drone video, virtual tours, etc)?</label>
+                            <select id="media_pref" class="custom-select w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition cursor-pointer">
+                                <option value="Yes, excited for full media and staging" selected>Yes, excited for full media and staging</option>
+                                <option value="Open to recommendations">Open to recommendations</option>
+                                <option value="Prefer standard photography">Prefer standard photography</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="hoa_details" class="block text-sm font-bold text-[#0F172A] mb-1">HOA Details (If applicable)</label>
+                            <p class="text-xs text-slate-400 mb-2 leading-relaxed">(Monthly HOA dues & management company name)</p>
+                            <input type="text" id="hoa_details" placeholder="e.g., $250/mo, Acme Property Management (or N/A)" class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition">
+                        </div>
+
+                        <div>
+                            <label for="comm_freq" class="block text-sm font-bold text-[#0F172A] mb-1.5">Preferred Communication Style</label>
+                            <select id="comm_freq" class="custom-select w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition cursor-pointer">
+                                <option value="Text updates & quick check-ins" selected>Text updates & quick check-ins</option>
+                                <option value="Weekly phone call summary">Weekly phone call summary</option>
+                                <option value="Email updates at my own pace">Email updates at my own pace</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="extra_notes" class="block text-sm font-bold text-[#0F172A] mb-1.5">Anything else on your mind or questions for Emiliano?</label>
+                            <textarea id="extra_notes" rows="2" placeholder="Feel free to share any questions, concerns, or ideas..." class="w-full bg-[#F1F5F9] border border-slate-200/70 rounded-2xl px-4 py-3.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:bg-white focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 8: Review, Pre-Listing Scheduler & Instant Delivery -->
+                <div class="step-panel" data-step="8">
+                    <div class="flex justify-center mb-3">
+                        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-xl border border-emerald-200 shadow-xs">
+                            <i class="fa-solid fa-calendar-check"></i>
+                        </div>
+                    </div>
+
+                    <h2 class="text-2xl font-extrabold text-[#0F172A] text-center tracking-tight mb-1">
+                        Review, Schedule & Send
+                    </h2>
+                    <p class="text-sm text-slate-500 text-center leading-relaxed mb-6">Pick your preferred window for our pre-listing walkthrough, then send your summary to Emiliano.</p>
+
+                    <!-- Dedicated Scheduling Section Card -->
+                    <div class="bg-[#F8FAFC] border border-slate-200/90 rounded-2xl p-4 sm:p-5 mb-6 space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="bg-[#0F172A] text-sky-400 w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5">
+                                <i class="fa-regular fa-calendar text-sm"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm sm:text-base font-extrabold text-[#0F172A] leading-snug">14-Day to Launch Pre-Listing Presentation</h3>
+                                <p class="text-xs text-slate-500 mt-0.5 leading-relaxed">When is the best time to go over our 14-day to launch pre-listing presentation?</p>
+                            </div>
+                        </div>
+
+                        <!-- Target Date Calendar Picker -->
+                        <div>
+                            <label for="launch_target_date" class="block text-xs font-bold text-[#0F172A] uppercase tracking-wider mb-1.5">Target Date Calendar Picker</label>
+                            <input type="date" id="launch_target_date" onchange="generatePayloadSummary()" oninput="generatePayloadSummary()" class="w-full bg-white border border-slate-200/90 rounded-xl px-3.5 py-2.5 text-[#0F172A] text-sm font-medium focus:outline-none focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition cursor-pointer">
+                        </div>
+
+                        <!-- Interactive Day of the Week Toggle Pills (Monday - Sunday) -->
+                        <div>
+                            <label class="block text-xs font-bold text-[#0F172A] uppercase tracking-wider mb-2">Best Days of the Week <span class="text-[11px] font-normal normal-case text-slate-400">(Tap all that work)</span></label>
+                            <div class="flex flex-wrap gap-1.5">
+                                <label class="cursor-pointer select-none">
+                                    <input type="checkbox" name="launch_days" value="Monday" onchange="generatePayloadSummary()" class="pill-checkbox hidden">
+                                    <span class="pill-label inline-flex items-center px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-bold transition hover:border-slate-300">
+                                        <i class="fa-solid fa-check pill-icon hidden mr-1 text-sky-400 text-[10px]"></i>Monday
+                                    </span>
+                                </label>
+                                <label class="cursor-pointer select-none">
+                                    <input type="checkbox" name="launch_days" value="Tuesday" onchange="generatePayloadSummary()" class="pill-checkbox hidden">
+                                    <span class="pill-label inline-flex items-center px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-bold transition hover:border-slate-300">
+                                        <i class="fa-solid fa-check pill-icon hidden mr-1 text-sky-400 text-[10px]"></i>Tuesday
+                                    </span>
+                                </label>
+                                <label class="cursor-pointer select-none">
+                                    <input type="checkbox" name="launch_days" value="Wednesday" onchange="generatePayloadSummary()" class="pill-checkbox hidden">
+                                    <span class="pill-label inline-flex items-center px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-bold transition hover:border-slate-300">
+                                        <i class="fa-solid fa-check pill-icon hidden mr-1 text-sky-400 text-[10px]"></i>Wednesday
+                                    </span>
+                                </label>
+                                <label class="cursor-pointer select-none">
+                                    <input type="checkbox" name="launch_days" value="Thursday" onchange="generatePayloadSummary()" class="pill-checkbox hidden">
+                                    <span class="pill-label inline-flex items-center px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-bold transition hover:border-slate-300">
+                                        <i class="fa-solid fa-check pill-icon hidden mr-1 text-sky-400 text-[10px]"></i>Thursday
+                                    </span>
+                                </label>
+                                <label class="cursor-pointer select-none">
+                                    <input type="checkbox" name="launch_days" value="Friday" onchange="generatePayloadSummary()" class="pill-checkbox hidden">
+                                    <span class="pill-label inline-flex items-center px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-bold transition hover:border-slate-300">
+                                        <i class="fa-solid fa-check pill-icon hidden mr-1 text-sky-400 text-[10px]"></i>Friday
+                                    </span>
+                                </label>
+                                <label class="cursor-pointer select-none">
+                                    <input type="checkbox" name="launch_days" value="Saturday" checked onchange="generatePayloadSummary()" class="pill-checkbox hidden">
+                                    <span class="pill-label inline-flex items-center px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-bold transition hover:border-slate-300">
+                                        <i class="fa-solid fa-check pill-icon hidden mr-1 text-sky-400 text-[10px]"></i>Saturday
+                                    </span>
+                                </label>
+                                <label class="cursor-pointer select-none">
+                                    <input type="checkbox" name="launch_days" value="Sunday" onchange="generatePayloadSummary()" class="pill-checkbox hidden">
+                                    <span class="pill-label inline-flex items-center px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-bold transition hover:border-slate-300">
+                                        <i class="fa-solid fa-check pill-icon hidden mr-1 text-sky-400 text-[10px]"></i>Sunday
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Preferred Time Windows -->
+                        <div>
+                            <label class="block text-xs font-bold text-[#0F172A] uppercase tracking-wider mb-2">Preferred Time Windows</label>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="cursor-pointer select-none">
+                                    <input type="checkbox" name="launch_times" value="Morning (9am–12pm)" checked onchange="generatePayloadSummary()" class="pill-checkbox hidden">
+                                    <span class="pill-label inline-flex items-center px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-semibold transition hover:border-slate-300">
+                                        <i class="fa-solid fa-check pill-icon hidden mr-1.5 text-sky-400 text-[10px]"></i>Morning (9am–12pm)
+                                    </span>
+                                </label>
+                                <label class="cursor-pointer select-none">
+                                    <input type="checkbox" name="launch_times" value="Afternoon (12pm–4pm)" onchange="generatePayloadSummary()" class="pill-checkbox hidden">
+                                    <span class="pill-label inline-flex items-center px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-semibold transition hover:border-slate-300">
+                                        <i class="fa-solid fa-check pill-icon hidden mr-1.5 text-sky-400 text-[10px]"></i>Afternoon (12pm–4pm)
+                                    </span>
+                                </label>
+                                <label class="cursor-pointer select-none">
+                                    <input type="checkbox" name="launch_times" value="Evening (4pm–7pm)" onchange="generatePayloadSummary()" class="pill-checkbox hidden">
+                                    <span class="pill-label inline-flex items-center px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-semibold transition hover:border-slate-300">
+                                        <i class="fa-solid fa-check pill-icon hidden mr-1.5 text-sky-400 text-[10px]"></i>Evening (4pm–7pm)
+                                    </span>
+                                </label>
+                                <label class="cursor-pointer select-none">
+                                    <input type="checkbox" name="launch_times" value="Flexible" onchange="generatePayloadSummary()" class="pill-checkbox hidden">
+                                    <span class="pill-label inline-flex items-center px-3 py-2 rounded-xl border border-slate-200 bg-white text-slate-700 text-xs font-semibold transition hover:border-slate-300">
+                                        <i class="fa-solid fa-check pill-icon hidden mr-1.5 text-sky-400 text-[10px]"></i>Flexible
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Optional Specific Time Note -->
+                        <div>
+                            <label for="launch_specific_time" class="block text-xs font-bold text-[#0F172A] uppercase tracking-wider mb-1.5">Specific Time Note (Optional)</label>
+                            <input type="text" id="launch_specific_time" oninput="generatePayloadSummary()" placeholder="e.g., 5:30 PM or anytime after 2 PM" class="w-full bg-white border border-slate-200/90 rounded-xl px-3.5 py-2.5 text-[#0F172A] text-sm font-medium placeholder-slate-400 focus:outline-none focus:border-[#0F172A] focus:ring-2 focus:ring-[#0F172A]/10 transition">
+                        </div>
+                    </div>
+
+                    <!-- Summary Payload Header -->
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">WISHLIST SUMMARY FOR <span id="summary-seller-name" class="text-[#0F172A]">YOU</span></span>
+                        <button type="button" onclick="copySummaryText()" class="text-xs text-blue-600 hover:text-blue-700 font-bold cursor-pointer flex items-center space-x-1.5 py-1 px-2 rounded-lg hover:bg-blue-50 transition">
+                            <i class="fa-regular fa-copy"></i>
+                            <span>Copy Text</span>
+                        </button>
+                    </div>
+
+                    <!-- Dark Navy Code Block -->
+                    <pre id="summary-payload-box" class="bg-[#0F172A] text-slate-100 p-4 rounded-2xl font-mono text-xs leading-relaxed overflow-y-auto max-h-64 whitespace-pre-wrap border border-slate-800 mb-6 shadow-inner">Building payload summary...</pre>
+
+                    <!-- Emerald Green Primary Submission Button -->
+                    <button type="button" onclick="submitToEmiliano()" id="final-submit-btn" class="w-full bg-[#059669] hover:bg-[#047857] text-white font-bold py-4 px-6 rounded-2xl transition duration-200 shadow-lg shadow-emerald-600/20 flex items-center justify-center space-x-2 text-base cursor-pointer">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Send My Journey Wishlist to Emiliano</span>
+                    </button>
+                    <p class="text-[11px] text-slate-400 text-center mt-2.5">Triggers direct email delivery to Emiliano & CRM integration</p>
+                </div>
+
+                <!-- Navigation Buttons (Back / Next Section) -->
+                <div class="flex items-center justify-between space-x-3 mt-7 pt-5 border-t border-slate-100" id="nav-buttons-container">
+                    <button type="button" onclick="prevStep()" id="back-btn" class="hidden py-3.5 px-5 rounded-2xl border border-slate-200 bg-white text-slate-700 font-bold text-sm hover:bg-slate-50 transition items-center justify-center space-x-2 cursor-pointer">
+                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                        <span>Back</span>
+                    </button>
+                    <button type="button" onclick="nextStep()" id="next-btn" class="ml-auto py-3.5 px-6 rounded-2xl bg-[#0F172A] hover:bg-slate-800 text-white font-bold text-sm transition shadow-md shadow-slate-900/15 flex items-center justify-center space-x-2 cursor-pointer">
+                        <span>Next Section</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-5 text-center text-xs text-slate-400 font-medium">
+        &copy; 2026 My Next Home Journey &bull; Prepared with Emiliano
+    </footer>
+
+    <!-- Logic Engine -->
+    <script>
+        let currentStep = 1;
+        const totalSteps = 8;
+        const web3FormsAccessKey = "d254944b-5c40-42d1-a804-2b7e4f37fe15";
+        let toastTimeout = null;
+
+        function showToast(message, type = 'info') {
+            const banner = document.getElementById('toast-banner');
+            const icon = document.getElementById('toast-icon');
+            const msgEl = document.getElementById('toast-message');
+
+            msgEl.textContent = message;
+
+            if (type === 'error') {
+                icon.className = 'fa-solid fa-circle-exclamation text-rose-400 text-base';
+            } else if (type === 'success') {
+                icon.className = 'fa-solid fa-circle-check text-emerald-400 text-base';
+            } else {
+                icon.className = 'fa-solid fa-circle-info text-blue-400 text-base';
+            }
+
+            banner.classList.remove('hidden');
+
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                banner.classList.add('hidden');
+            }, 3800);
+        }
+
+        function updateUI() {
+            document.querySelectorAll('.step-panel').forEach(panel => panel.classList.remove('active'));
+            document.querySelector(`.step-panel[data-step="${currentStep}"]`).classList.add('active');
+
+            document.getElementById('current-step-num').textContent = currentStep;
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            const backBtn = document.getElementById('back-btn');
+            if (currentStep === 1) {
+                backBtn.classList.add('hidden');
+                backBtn.classList.remove('flex');
+            } else {
+                backBtn.classList.remove('hidden');
+                backBtn.classList.add('flex');
+            }
+
+            const nextBtn = document.getElementById('next-btn');
+            if (currentStep === 8) {
+                nextBtn.style.display = 'none';
+                generatePayloadSummary();
+            } else {
+                nextBtn.style.display = 'flex';
+            }
+        }
+
+        function nextStep() {
+            if (currentStep === 1) {
+                const name = document.getElementById('full_name').value.trim();
+                const phone = document.getElementById('phone_number').value.trim();
+                const email = document.getElementById('email_address').value.trim();
+                if (!name || !phone || !email) {
+                    showToast('Please enter your Name, Phone Number, and Email Address to continue.', 'error');
+                    return;
+                }
+            }
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function formatTargetDate(dateStr) {
+            if (!dateStr) return 'Flexible / Not specified';
+            const parts = dateStr.split('-');
+            if (parts.length !== 3) return dateStr;
+            const dateObj = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+            return dateObj.toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        function generatePayloadSummary() {
+            const rawName = document.getElementById('full_name').value.trim();
+            const name = rawName || 'Not specified';
+            document.getElementById('summary-seller-name').textContent = rawName ? rawName.toUpperCase() : 'YOU';
+
+            const phone = document.getElementById('phone_number').value.trim() || 'Not specified';
+            const email = document.getElementById('email_address').value.trim() || 'Not specified';
+            const propAddress = document.getElementById('property_address').value.trim() || 'Not specified';
+            const aboutSeller = document.getElementById('about_seller').value.trim() || 'Not specified';
+
+            const destination = document.getElementById('moving_destination').value.trim() || 'Exploring options';
+            const timeline = document.getElementById('moving_timeline').value;
+            const milestone = document.getElementById('milestone_event').value.trim() || 'None specified';
+
+            const idealPrice = document.getElementById('ideal_list_price').value.trim() || 'Open to valuation';
+            const bottomPrice = document.getElementById('bottom_line_price').value.trim() || 'Open to discussing';
+            const mortgageOwed = document.getElementById('mortgage_balance').value.trim() || 'Not specified';
+
+            const openIncentives = document.getElementById('open_to_incentives').value;
+            const financeOptions = Array.from(document.querySelectorAll('input[name="finance_options"]:checked'))
+                .map(el => el.value)
+                .join(', ') || 'None selected';
+            const financeNotes = document.getElementById('finance_notes').value.trim() || 'None';
+
+            const homeDesc = document.getElementById('home_description').value.trim() || 'Not specified';
+            const homeUpgrades = document.getElementById('home_upgrades').value.trim() || 'Not specified';
+            const homeCondition = document.getElementById('home_condition').value;
+            const solarStatus = document.getElementById('solar_status').value;
+            const occupancyStatus = document.getElementById('occupancy_status').value;
+
+            const buyingNext = document.getElementById('buying_next').value;
+            const nextAreas = document.getElementById('next_home_areas').value.trim() || 'N/A';
+            const nextPrice = document.getElementById('next_home_price').value.trim() || 'N/A';
+            const nextMustHaves = document.getElementById('next_home_musthaves').value.trim() || 'N/A';
+
+            const showingPref = document.getElementById('showing_pref').value;
+            const mediaPref = document.getElementById('media_pref').value;
+            const hoaDetails = document.getElementById('hoa_details').value.trim() || 'N/A / None';
+            const commFreq = document.getElementById('comm_freq').value;
+            const extraNotes = document.getElementById('extra_notes').value.trim() || 'None';
+
+            // 14-Day to Launch Pre-Listing Presentation Scheduling
+            const rawTargetDate = document.getElementById('launch_target_date').value;
+            const targetDate = formatTargetDate(rawTargetDate);
+            const launchDays = Array.from(document.querySelectorAll('input[name="launch_days"]:checked'))
+                .map(el => el.value)
+                .join(', ') || 'Any day';
+            const launchTimes = Array.from(document.querySelectorAll('input[name="launch_times"]:checked'))
+                .map(el => el.value)
+                .join(', ') || 'Flexible';
+            const specificTime = document.getElementById('launch_specific_time').value.trim() || 'None specified';
+
+            const payload = 
+`==================================================
+MY NEXT HOME JOURNEY WITH EMILIANO
+==================================================
+
+[BASIC DETAILS]
+Full Name: ${name}
+Best Phone: ${phone}
+Best Email: ${email}
+Property Address: ${propAddress}
+About The Household: ${aboutSeller}
+
+[THE JOURNEY AHEAD]
+Moving Destination: ${destination}
+Ideal Timeline: ${timeline}
+Life Event / Milestone: ${milestone}
+
+[PRICING & EQUITY COMFORT ZONE]
+Ideal Magic-Wand List Price: ${idealPrice}
+Comfort Floor (Bottom Price): ${bottomPrice}
+Approx. Mortgage Owed: ${mortgageOwed}
+
+[CREATIVE FINANCING OPTIONS]
+Open to Buyer Incentives: ${openIncentives}
+Selected Options: ${financeOptions}
+Financing Notes: ${financeNotes}
+
+[YOUR HOME & STORY]
+Home Description: ${homeDesc}
+Recent Upgrades: ${homeUpgrades}
+Overall Condition: ${homeCondition}
+Solar Panels Status: ${solarStatus}
+Property Occupancy: ${occupancyStatus}
+
+[YOUR NEXT HOME SEARCH]
+Buying Next Home: ${buyingNext}
+Target Next Areas: ${nextAreas}
+Target Next Price Range: ${nextPrice}
+Next Home Must-Haves: ${nextMustHaves}
+
+[STRESS-FREE STRATEGY & MEDIA]
+Showing Preferences: ${showingPref}
+Zillow Showcase & Media: ${mediaPref}
+HOA Details: ${hoaDetails}
+Communication Style: ${commFreq}
+Extra Questions / Notes: ${extraNotes}
+
+[14-DAY TO LAUNCH PRESENTATION]
+Preferred Target Date: ${targetDate}
+Best Days of Week: ${launchDays}
+Preferred Time Windows: ${launchTimes}
+Specific Time Note: ${specificTime}
+==================================================`;
+
+            document.getElementById('summary-payload-box').textContent = payload;
+        }
+
+        function copySummaryText() {
+            const payloadText = document.getElementById('summary-payload-box').textContent;
+            const tempInput = document.createElement('textarea');
+            tempInput.value = payloadText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            try {
+                document.execCommand('copy');
+                showToast('Next Home Journey summary copied to clipboard!', 'success');
+            } catch (err) {
+                showToast('Unable to copy automatically.', 'error');
+            }
+            document.body.removeChild(tempInput);
+        }
+
+        async function submitToEmiliano() {
+            const submitBtn = document.getElementById('final-submit-btn');
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> <span>Sending Wishlist...</span>`;
+            submitBtn.disabled = true;
+
+            generatePayloadSummary();
+            const payloadText = document.getElementById('summary-payload-box').textContent;
+            const sellerName = document.getElementById('full_name').value.trim() || 'New Home Seller';
+            const sellerEmail = document.getElementById('email_address').value.trim();
+
+            try {
+                const response = await fetch("https://api.web3forms.com/submit", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        access_key: web3FormsAccessKey,
+                        subject: `New My Next Home Journey Wishlist: ${sellerName}`,
+                        from_name: sellerName,
+                        replyto: sellerEmail,
+                        message: payloadText
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showToast("Thank you! Your Next Home Journey wishlist has been sent to Emiliano.", "success");
+                    submitBtn.innerHTML = `<i class="fa-solid fa-check"></i> <span>Wishlist Sent Successfully!</span>`;
+                    submitBtn.classList.remove("bg-[#059669]", "hover:bg-[#047857]");
+                    submitBtn.classList.add("bg-slate-800");
+                } else {
+                    showToast("Submission error: " + (result.message || "Please check your network settings."), "error");
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> <span>Send My Journey Wishlist to Emiliano</span>`;
+                }
+            } catch (err) {
+                showToast("Network error. Please check your internet connection.", "error");
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> <span>Send My Journey Wishlist to Emiliano</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
